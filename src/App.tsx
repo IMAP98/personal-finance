@@ -1,26 +1,36 @@
+import { useMemo } from "react";
 import { BudgetForm } from "./components/BudgetForm";
 import { useBudget } from "./hooks/useBudget";
+import { BudgetTracker } from "./components/BudgetTracker";
+import ExpenseModal from './components/ExpenseModa';
 
 function App() {
 
-    const { state, dispatch } = useBudget();
-
-    console.log(state);
+    const { state } = useBudget();
     
+    const isValidBudget = useMemo(() => state.budget, [state.budget]);
+
 
     return (
-      <>
-          <header className="bg-blue-600 py-8 max-h-72">
-              <h1 className="uppercase text-center font-black text-4xl text-white">
-                  Expense planner
-              </h1>
-          </header>
-          <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg mt-10 p-10">
+        <>
+            <header className="bg-blue-600 py-8 max-h-72">
+                <h1 className="uppercase text-center font-black text-4xl text-white">
+                    Expense planner
+                </h1>
+            </header>
+            <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg mt-10 p-10">
 
-              <BudgetForm />
+                { isValidBudget ? <BudgetTracker /> : <BudgetForm /> }
               
-          </div>
-      </>
+            </div>
+
+            { isValidBudget && (
+                <main className="max-w-3xl mx-auto py-10">
+                    <ExpenseModal />
+                </main>
+            )}
+
+        </>
     );
 
 }
