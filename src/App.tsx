@@ -2,13 +2,13 @@ import { useMemo } from "react";
 import { BudgetForm } from "./components/BudgetForm";
 import { useBudget } from "./hooks/useBudget";
 import { BudgetTracker } from "./components/BudgetTracker";
-import ExpenseModal from './components/ExpenseModa';
+import ExpenseModal from './components/ExpenseModal';
 
 function App() {
 
     const { state } = useBudget();
     
-    const isValidBudget = useMemo(() => state.budget, [state.budget]);
+    const isValidBudget = useMemo(() => state.budget > 0, [state.budget]);
 
 
     return (
