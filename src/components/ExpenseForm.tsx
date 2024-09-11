@@ -2,7 +2,7 @@ import { categories } from "../data/categories";
 import DatePicker from 'react-date-picker';
 import 'react-calendar/dist/Calendar.css'
 import 'react-date-picker/dist/DatePicker.css'
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import type { DraftExpense, Value } from "../types";
 import { ErrorMessage } from "./ErrorMessage";
 import { useBudget } from "../hooks/useBudget";
@@ -19,8 +19,15 @@ export const ExpenseForm = () => {
 
     const [error, setError] = useState('');
 
-    const { dispatch } = useBudget();
+    const { dispatch, state } = useBudget();
 
+    useEffect(() => {
+        if (state.editingId) {
+            const editingExpense = state.expenses.filter(currentExpense => currentExpense.id === state.editingId)[0];
+            setExpense(editingExpense);
+        }
+    }, [state.editingId]);
+    
     const handleChange = (event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>) => {
 
         const {name, value} = event.target;
@@ -43,14 +50,20 @@ export const ExpenseForm = () => {
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 
         event.preventDefault();
+
+        const hasEmptyValue = Object.values(expense).includes('');
         
-        if (Object.values(expense).includes('')) {
+        if (hasEmptyValue) {
             setError('All fields are required.');
             return;
         }
 
         setError('');
-        dispatch({type: 'add-expense', payload: { expense }});
+
+        state.editingId
+            ? dispatch({type: 'update-expense', payload: { expense: { id: state.editingId, ...expense } }})
+            : dispatch({type: 'add-expense', payload: { expense }});
+        
         setExpense({
             amount: 0,
             expenseName: '',
@@ -64,7 +77,7 @@ export const ExpenseForm = () => {
     return (
         <form className="space-y-5" onSubmit={handleSubmit}>
             <legend className="uppercase text-center text-2xl font-black border-b-4 border-blue-500 py-2">
-                New expense
+                { state.editingId ? 'Save changes' : 'New expense' }
             </legend>
 
             {error && <ErrorMessage>{error}</ErrorMessage>}
@@ -146,11 +159,12 @@ export const ExpenseForm = () => {
                 <input 
                     type="submit" 
                     className="bg-blue-600 cursor-pointer w-full p-2 text-white uppercase font-bold rounded-lg"
-                    value={'Register expense'}
+                    value={ state.editingId ? 'Save changes' : 'Register expense' }
                 />
 
             </div>
 
         </form>
     );
+    
 }

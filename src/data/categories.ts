@@ -9,3 +9,5 @@ export const categories: Category[] = [
     { id: '6', name: 'Salud', icon: 'salud' },
     { id: '7', name: 'Suscripciones', icon: 'suscripciones' },
   ];
+
+  // COMMENT: Gastos fijos, variables e inesperados, transporte, 
