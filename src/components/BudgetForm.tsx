@@ -16,11 +16,8 @@ export const BudgetForm = () => {
     }, [budget]);
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-
         event.preventDefault();
-
         dispatch({type: 'add-budget', payload: {budget}});
-
     }
 
 
@@ -48,4 +45,5 @@ export const BudgetForm = () => {
             />
         </form>
     );
+    
 }
